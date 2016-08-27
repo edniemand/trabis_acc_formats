@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--FORMATO DE LA PAGINA DEL REPORTE-->
+        <template id="template_acc_factura_cfdi" name="style">
+            <t t-call="report.html_container" t-att-style="editable and 'line-height:7; margin-top: 0px; font-size: 80%;'">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" >
+                        <!-- ************************************* TABLA DE ENCABEZADO DE LA FACTURA ************************************* -->
+                        <table cellpadding="10"><!-- class="table table-bordered" style="border-style:solid" -->
+                            <tr>
+                                <td width="20%" align="left">
+                                    <img t-if="o.company_id.logo"
+                                    t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
+                                    style="max-height: 80px;" />
+                                </td>
+                                <td  width="60%">
+                                    <center>
+                                        <h4><b><span t-field="o.company_id.name" /></b></h4><br/>
+                                        <!--b>Fecha: </b><span t-esc="time.strftime('%d/%m/%Y')"/><br/-->
+                                        <span t-field="o.company_id.street" />, <span t-field="o.company_id.street2" /> <span t-field="o.company_id.zip" /><br/>
+                                        Localidad: <span t-field="o.company_id.city" /><br/>
+                                        <span t-field="o.company_id.city" />, <span t-field="o.company_id.state_id.name" />, <span t-field="o.company_id.country_id.name" /><br/>
+                                        RFC: <span t-field="o.company_id.rfc" /><br/>
+                                        Personas morales del régimen general<br/>
+                                        Teléfono(s): <spann t-field="o.company_id.phone" />, <spann t-field="o.company_id.fax" />
+                                    </center>
+                                </td>
+                                <td width="20%">
+                                    <h4><b><font color="red">Factura: <span t-field="o.move_name" /></font></b></h4>
+                                    Condicion de pago: <br/>
+                                    Expedido en: <br/>
+                                    <span t-field="o.company_id.name" /><br/>
+                                    <span t-field="o.company_id.street" /> <span t-field="o.company_id.street2" /><br/>
+                                    <span t-field="o.company_id.zip" /><br/>
+                                    Localidad: <span t-field="o.company_id.city" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><hr/></td>
+                            </tr>
+                        </table>
+                        <!-- ************************************* TABLA DE INFORMACION DE CLIENTE ************************************* -->
+                        <table cellpadding="10">
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td width="100"><b>Receptor: </b></td>
+                                <td width="250"><span t-field="o.partner_id.name" /></td>
+                                <td width="100"><b>RFC: </b></td>
+                                <td width="250"><span t-field="o.partner_id.vat" /></td>
+                                <td width="200" rowspan="6">
+                                    <center>
+                                    <span t-field="o.company_id.city" />, 
+                                    <span t-field="o.company_id.state_id.name" />, 
+                                    <span t-field="o.company_id.country_id.name" />
+                                    <br/>
+                                    a <span t-esc="time.strftime('%d/%m/%Y')"/>
+                                    <br/>
+                                    Serie: <!--span t-field="" /--><br/>
+                                    Aprobación: 2014<br/>
+                                    Año Aprobación: 2014
+                                    </center>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td><b>Calle: </b></td>
+                                <td><span t-field="o.partner_id.street" /></td>
+                                <td><b>No. Ext: </b></td>
+                                <td></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td><b>Colonia: </b></td>
+                                <td><span t-field="o.partner_id.street2" /></td>
+                                <td><b>No. Int: </b></td>
+                                <td></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td><b>Lugar: </b></td>
+                                <td><span t-field="o.partner_id.city" />,<span t-field="o.partner_id.state_id.name" />,<span t-field="o.partner_id.country_id.name" /></td>
+                                <td><b>C.P: </b></td>
+                                <td><span t-field="o.partner_id.zip" /></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td><b>Teléfono: </b></td>
+                                <td><span t-field="o.partner_id.phone" /></td>
+                                <td><b>Localidad: </b></td>
+                                <td><span t-field="o.partner_id.city" /></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td><b>E-mail: </b></td>
+                                <td><span t-field="o.partner_id.email" /></td>
+                                <td><b>Origen: </b></td>
+                                <td><span t-field="o.origin" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><br/><br/></td>
+                            </tr>
+                        </table>
+                            <!-- ************************************* TABLA DE LINEAS DE FACTURA ************************************* -->
+                        <table cellpadding="10" class="table table-bordered">
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td><b>Cantidad</b></td>
+                                <td><b>Unidad</b></td>
+                                <td><b>Código</b></td>
+                                <td><b>Descripción</b></td>
+                                <td><b>Precio Unit.</b></td>
+                                <td><b>Importe</b></td>
+                            </tr>
+                            
+                            <tr t-foreach="o.invoice_line_ids" t-as="l" style="border-bottom: 1px solid #ddd;">
+                                <td><span t-field="l.quantity" /></td>
+                                <td><span t-field="l.product_id.uom_id.name" /></td>
+                                <td><span t-field="l.product_id.default_code" /></td>
+                                <td style="overflow:hidden">[<span t-field="l.product_id.default_code" />]<span t-field="l.product_id.name" /></td>
+                                <td align="right"><span t-field="l.price_unit" /></td>
+                                <td align="right">
+                                    <t t-set="total" t-value="(l.quantity*l.price_unit)" /><t t-esc="total" />
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- ************************************* TABLA DE TOTALES ************************************* -->
+                        <table cellpadding="10">
+                            <tr>
+                                <td colspan="3">
+                                    <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3" width="70%">
+                                    <b>IMPORTE CON LETRA: </b><span t-field="o.amount_to_text" />
+                                </td>
+                                <td align="right"><b>Subtotal: </b></td>
+                                <td align="right"><span t-field="o.amount_untaxed" /></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #000;">
+                                <td align="right"><b>IVA 16 - IVA 16% </b></td>
+                                <td align="right"><span t-field="o.amount_tax" /></td>
+                            </tr>
+                            <tr>
+                                <td align="right"><b>Total: </b></td>
+                                <td align="right"><span t-field="o.amount_total" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <br/>
+                                    Se aceptarán devoluciones en un plazo máximo de 5 días hábiles, las cuales pueden aplicar cargo por recolección de acuerdo al motivo de la devolución.<br/>
+                                    "Este documento es una representación impresa de un CFDI"<br/>
+                                    CFDI, Comprobante Fiscal Digital por Internet<br/><br/>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- ************************************* TABLA(S) DE VALORES CFDI ************************************* -->
+                        <table class="table table-bordered">
+                            <tr>
+                                <td align="center">
+                                    <b>Peso Total</b>
+                                    <br/>
+                                </td>
+                                <td align="center">
+                                    <b>Forma de Pago</b>
+                                    <br/>
+                                    Pago en una sola exhibición
+                                </td>
+                                <td align="center">
+                                    <b>Vendedor</b>
+                                    <br/>
+                                    <span t-field="o.user_id.name" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <b>Certificado del SAT</b>
+                                    <br/>
+                                    <span t-field="o.cfdi_no_certificado" />
+                                </td>
+                                <td align="center">
+                                    <b>Fecha de Timbrado</b>
+                                    <br/>
+                                    <span t-field="o.cfdi_fecha_timbrado" />
+                                </td>
+                                <td align="center">
+                                    <b>Folio Fiscal</b>
+                                    <br/>
+                                    <span t-field="o.cfdi_folio_fiscal" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="35%">
+                                    <b>Certificado del Emisor</b>
+                                    <br/>
+                                    <span t-field="o.no_certificado" />
+                                </td>
+                                <td align="center" width="30%">
+                                    <b>Método de Pago</b>
+                                    <br/>
+                                    <span t-field="o.pay_method_ids.code" />-<span t-field="o.pay_method_ids.name" />
+                                </td>
+                                <td align="center" width="35%">
+                                    <b>Últimos 4 dígitos de la cuenta bancaria</b>
+                                    <br/>
+                                    <span t-field="o.acc_payment.bank_id.name" />-<span t-field="o.acc_payment.last_acc_number" />
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td rowspan="4">
+                                    <img t-if="o.company_id.logo"
+                                    t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
+                                    style="max-height: 80px;" />
+                                </td>
+                                <td>
+                                    <b>Sello Digital Emisor: </b>
+                                    <br/>
+                                    <!--span t-field="" /-->
+                                </td>
+                                <td rowspan="4">
+                                    <!--span t-field="o.cfdi_cbb" /-->
+                                    <img t-if="o.company_id.logo"
+                                    t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
+                                    style="max-height: 80px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Sello Digital SAT: </b>
+                                    <br/>
+                                    <!--span t-field="" /-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Cadena Original: </b>
+                                    <br/>
+                                    <!--span t-field="" /-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Enlace al certificado: </b>
+                                    <br/>
+                                    <!--span t-field="" /-->
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <report 
+            id="format_acc_factura_cfdi"
+            string="Factura CFDI Cedula"
+            model="account.invoice" 
+            report_type="qweb-pdf"
+            file="trabis_acc_formats.template_acc_factura_cfdi" 
+            name="trabis_acc_formats.template_acc_factura_cfdi"
+        />
+
+        <record id="paperformat_formato_factura_cfdi" model="report.paperformat">
+            <field name="name">Factura CFDI</field>
+            <field name="format">Letter</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">7</field>
+            <field name="margin_bottom">7</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_spacing">35</field>
+            <field name="dpi">90</field>
+            <field name="report_ids" eval="[(4, ref('format_acc_factura_cfdi'))]"/>
+        </record>
+
+    </data>
+</openerp>
